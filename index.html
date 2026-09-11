@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>iNaturalist Identification Project Dashboard v3.7</title>
+<title>iNaturalist Identification Project Dashboard v3.8</title>
 <style>
 :root{--bg:#f5f6f3;--panel:#fff;--ink:#172018;--muted:#69736b;--line:#dfe5df;--accent:#74ac00;--accent-dark:#4f7900;--soft:#edf5df;--warn:#a86b00;--radius:14px;--shadow:0 8px 24px rgba(26,38,27,.06)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)} a{color:#426900}.shell{max-width:1500px;margin:auto;padding:0 22px 30px}
@@ -113,6 +113,9 @@ html.ipad .identifier-chip{font-size:18px;padding:12px 14px}
 html.ipad .footer{font-size:16px}
 html.ipad .sidebar{display:block!important}
 
+
+.filter-diagnostic{margin:0 0 14px;padding:12px 14px;border:1px solid #d9e2cf;border-radius:10px;background:#f8faf5;font-size:13px;line-height:1.45}
+.filter-diagnostic strong{display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -120,7 +123,7 @@ html.ipad .sidebar{display:block!important}
 (function(){var ua=navigator.userAgent||"";var ipad=/iPad/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);if(ipad)document.documentElement.classList.add("ipad");})();
 </script>
 <div class="shell">
-  <div class="topbar"><div class="brand"><div class="leaf">ID</div><strong>iNaturalist Identification Project</strong></div><div class="live">v3.7 · ● openbare API</div></div>
+  <div class="topbar"><div class="brand"><div class="leaf">ID</div><strong>iNaturalist Identification Project</strong></div><div class="live">v3.8 · ● openbare API</div></div>
   <div class="hero">
     <div><h1 id="heroName">Mijn identificatieproject</h1><p>Dashboard voor identificatie-activiteit, identifiers en taxa.</p></div>
     <div class="hero-actions"><button id="shareBtn" class="ghost">Deel project</button><button id="fullBtn" class="secondary">Volledige analyse</button></div>
@@ -158,7 +161,7 @@ html.ipad .sidebar{display:block!important}
 
     <main class="main">
       <div class="tabs"><div class="tab active">Overzicht</div><div class="tab">Identifiers</div><div class="tab">Taxa</div><div class="tab">Identificaties</div></div>
-      <div id="status" class="status"></div>
+      <div id="filterDiagnostic" class="filter-diagnostic" style="display:none"></div><div id="status" class="status"></div>
       <section class="kpis">
         <div class="panel kpi"><div class="label">Identificaties</div><div id="kpiIds" class="value">—</div><div class="sub">totaal volgens API</div></div>
         <div class="panel kpi"><div class="label">Identifiers</div><div id="kpiIdentifiers" class="value">—</div><div class="sub">unieke identificeerders</div></div>
@@ -175,7 +178,7 @@ html.ipad .sidebar{display:block!important}
         <div class="panel card"><div class="section-head"><h2>Activiteit</h2><span id="activityMeta" class="meta">recente steekproef</span></div><div id="activity" class="chart"></div><div id="chartMeta" class="chart-meta"></div></div>
       </section>
       <section class="panel card"><div class="section-head"><h2>Recente identificaties</h2><button id="csvBtn" class="ghost small">CSV exporteren</button></div><div class="table-wrap"><table><thead><tr><th>Datum</th><th>Identifier</th><th>Identificatie</th><th>Categorie</th><th>Observatie</th></tr></thead><tbody id="idRows"><tr><td colspan="5" class="empty">Nog geen data geladen.</td></tr></tbody></table></div></section>
-      <div class="footer">Deze app gebruikt de openbare iNaturalist v1 API. Bij geselecteerde identifiers bevraagt v3.7 iedere gebruiker afzonderlijk en voegt de resultaten daarna samen. De normale dashboardmodus haalt aggregaties plus maximaal 200 recente identificaties op. “Volledige analyse” pagineert rustig door maximaal 10.000 identificaties om een nauwkeurige tijdreeks en telling van unieke observaties te berekenen. Voor grotere datasets is een backend met cache de aanbevolen volgende stap.</div>
+      <div class="footer">Deze app gebruikt de openbare iNaturalist v1 API. Bij geselecteerde identifiers bevraagt v3.8 iedere gebruiker afzonderlijk en voegt de resultaten daarna samen. De normale dashboardmodus haalt aggregaties plus maximaal 200 recente identificaties op. “Volledige analyse” pagineert rustig door maximaal 10.000 identificaties om een nauwkeurige tijdreeks en telling van unieke observaties te berekenen. Voor grotere datasets is een backend met cache de aanbevolen volgende stap.</div>
     </main>
   </div>
 </div>
@@ -202,7 +205,49 @@ function renderRows(rows){latestRows=rows;if(!rows.length){$('idRows').innerHTML
 function mergeTaxa(groups){const m=new Map();for(const rows of groups){for(const x of (rows||[])){const id=x.taxon?.id||x.taxon_id||x.id;if(!id)continue;const prev=m.get(id);if(prev)prev.count+=(x.count||0);else m.set(id,{...x,count:x.count||0})}}return [...m.values()].sort((a,b)=>(b.count||0)-(a.count||0))}
 function mergeCategories(groups){const m=new Map();for(const rows of groups){for(const x of (rows||[]))m.set(x.category,(m.get(x.category)||0)+(x.count||0))}return {results:[...m.entries()].map(([category,count])=>({category,count}))}}
 async function loadOneUser(f,user){const ids=await api('/identifications',paramsFor(f,{__user:user,per_page:PAGE_SIZE,order_by:'created_at',order:'desc'}));await sleep(450);const cats=await api('/identifications/categories',paramsFor(f,{__user:user}));await sleep(450);const taxa=await api('/identifications/species_counts',paramsFor(f,{__user:user,per_page:200,taxon_of:'identification'}));return {user,ids,cats,taxa}}
-async function loadDashboard(){const f=getFilters();if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('heroName').textContent=f.name;$('loadBtn').disabled=true;$('loadBtn').textContent='Laden…';setStatus(`Bezig met laden van “${f.name}”…`);fullRows=[];try{
+
+function baseParamsForUser(f,user,extra={}){
+  const p=new URLSearchParams();
+  if(f.d1)p.set('d1',f.d1);
+  if(f.d2)p.set('d2',f.d2.includes('T')?f.d2:`${f.d2}T23:59:59`);
+  if(f.taxon_id)p.set('taxon_id',f.taxon_id);
+  if(f.place_id)p.set('place_id',f.place_id);
+  if(user)p.set('user_id',user);
+  Object.entries(extra).forEach(([k,v])=>p.set(k,v));
+  return p;
+}
+async function diagnoseUserQuery(f,user){
+  const stages=[
+    {name:'user + datum + taxon/gebied', add:{}},
+    {name:'+ alleen observaties van anderen', add:{own_observation:'false'}},
+    {name:'+ alleen huidige IDs', add:{own_observation:'false',current:'true'}},
+    {name:'+ ID-categorieën', add:{own_observation:'false',current:'true',category:f.categories.join(',')}}
+  ];
+  const results=[];
+  for(const s of stages){
+    const d=await api('/identifications',baseParamsForUser(f,user,{...s.add,per_page:1}));
+    results.push({name:s.name,total:d.total_results||0});
+    await sleep(350);
+  }
+  return results;
+}
+async function runSelectedDiagnostics(f){
+  if(f.user_mode!=='selected'||!f.users.length)return;
+  const box=$('filterDiagnostic');
+  box.style.display='block';
+  box.innerHTML='<strong>Filterdiagnose v3.8</strong>Test per geselecteerde identifier…';
+  const all=[];
+  for(const u of f.users){
+    try{all.push({user:u,stages:await diagnoseUserQuery(f,u)})}
+    catch(e){all.push({user:u,error:e.message})}
+  }
+  box.innerHTML='<strong>Filterdiagnose v3.8</strong>'+all.map(r=>{
+    if(r.error)return `${escapeHtml(r.user)}: fout — ${escapeHtml(r.error)}`;
+    return `${escapeHtml(r.user)}: `+r.stages.map(s=>`${escapeHtml(s.name)} = <b>${fmt(s.total)}</b>`).join(' → ');
+  }).join('<br>');
+}
+
+async function loadDashboard(){const f=getFilters();$('filterDiagnostic').style.display='none';if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('heroName').textContent=f.name;$('loadBtn').disabled=true;$('loadBtn').textContent='Laden…';setStatus(`Bezig met laden van “${f.name}”…`);fullRows=[];try{await runSelectedDiagnostics(f);
 if(f.user_mode==='selected'){
   const packs=[];
   for(let i=0;i<f.users.length;i++){setStatus(`Laden voor @${f.users[i]} (${i+1}/${f.users.length})…`);packs.push(await loadOneUser(f,f.users[i]));if(i<f.users.length-1)await sleep(450)}
