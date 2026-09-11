@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>iNaturalist Identification Project Dashboard v3.8</title>
+<title>iNaturalist Identification Project Dashboard v3.9</title>
 <style>
 :root{--bg:#f5f6f3;--panel:#fff;--ink:#172018;--muted:#69736b;--line:#dfe5df;--accent:#74ac00;--accent-dark:#4f7900;--soft:#edf5df;--warn:#a86b00;--radius:14px;--shadow:0 8px 24px rgba(26,38,27,.06)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)} a{color:#426900}.shell{max-width:1500px;margin:auto;padding:0 22px 30px}
@@ -113,9 +113,6 @@ html.ipad .identifier-chip{font-size:18px;padding:12px 14px}
 html.ipad .footer{font-size:16px}
 html.ipad .sidebar{display:block!important}
 
-
-.filter-diagnostic{margin:0 0 14px;padding:12px 14px;border:1px solid #d9e2cf;border-radius:10px;background:#f8faf5;font-size:13px;line-height:1.45}
-.filter-diagnostic strong{display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -123,7 +120,7 @@ html.ipad .sidebar{display:block!important}
 (function(){var ua=navigator.userAgent||"";var ipad=/iPad/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);if(ipad)document.documentElement.classList.add("ipad");})();
 </script>
 <div class="shell">
-  <div class="topbar"><div class="brand"><div class="leaf">ID</div><strong>iNaturalist Identification Project</strong></div><div class="live">v3.8 · ● openbare API</div></div>
+  <div class="topbar"><div class="brand"><div class="leaf">ID</div><strong>iNaturalist Identification Project</strong></div><div class="live">v3.9 · ● openbare API</div></div>
   <div class="hero">
     <div><h1 id="heroName">Mijn identificatieproject</h1><p>Dashboard voor identificatie-activiteit, identifiers en taxa.</p></div>
     <div class="hero-actions"><button id="shareBtn" class="ghost">Deel project</button><button id="fullBtn" class="secondary">Volledige analyse</button></div>
@@ -152,16 +149,17 @@ html.ipad .sidebar{display:block!important}
       </div>
       <label class="check" style="margin-top:10px"><input id="ownObs" type="checkbox"> Alleen IDs op eigen observaties</label><label class="check"><input id="currentOnly" type="checkbox" checked> Alleen huidige IDs</label>
       <button id="loadBtn" class="primary">Dashboard laden</button>
-      <div class="side-actions"><button id="saveBtn" class="secondary small">Opslaan</button><button id="resetBtn" class="ghost small">Wissen</button></div>
-      <label class="field" for="savedProjects">Opgeslagen projecten</label><select id="savedProjects"><option value="">— kies project —</option></select>
+      <div class="side-actions"><button id="saveBtn" class="secondary small">Opslaan op deze iPad</button><button id="resetBtn" class="ghost small">Wissen</button></div>
+      <label class="field" for="permanentProjects">Permanente projecten</label><select id="permanentProjects"><option value="">— laden uit GitHub —</option></select>
+      <label class="field" for="savedProjects">Lokaal opgeslagen</label><select id="savedProjects"><option value="">— kies lokaal project —</option></select>
       <div id="fullProgress" class="progress" style="display:none"><div></div></div>
       <div id="shareBox" class="share-box"></div>
-      <div class="hint">Lokale projecten blijven alleen in deze browser. Een deel-URL bevat de filterinstellingen, geen wachtwoord of token.</div>
+      <div class="hint">Permanente projecten staan in deze GitHub-repository en zijn op ieder apparaat beschikbaar. “Opslaan op deze iPad” gebruikt alleen Safari-opslag. Een deel-URL bevat de filterinstellingen, geen wachtwoord of token.</div>
     </aside>
 
     <main class="main">
       <div class="tabs"><div class="tab active">Overzicht</div><div class="tab">Identifiers</div><div class="tab">Taxa</div><div class="tab">Identificaties</div></div>
-      <div id="filterDiagnostic" class="filter-diagnostic" style="display:none"></div><div id="status" class="status"></div>
+      <div id="status" class="status"></div>
       <section class="kpis">
         <div class="panel kpi"><div class="label">Identificaties</div><div id="kpiIds" class="value">—</div><div class="sub">totaal volgens API</div></div>
         <div class="panel kpi"><div class="label">Identifiers</div><div id="kpiIdentifiers" class="value">—</div><div class="sub">unieke identificeerders</div></div>
@@ -178,7 +176,7 @@ html.ipad .sidebar{display:block!important}
         <div class="panel card"><div class="section-head"><h2>Activiteit</h2><span id="activityMeta" class="meta">recente steekproef</span></div><div id="activity" class="chart"></div><div id="chartMeta" class="chart-meta"></div></div>
       </section>
       <section class="panel card"><div class="section-head"><h2>Recente identificaties</h2><button id="csvBtn" class="ghost small">CSV exporteren</button></div><div class="table-wrap"><table><thead><tr><th>Datum</th><th>Identifier</th><th>Identificatie</th><th>Categorie</th><th>Observatie</th></tr></thead><tbody id="idRows"><tr><td colspan="5" class="empty">Nog geen data geladen.</td></tr></tbody></table></div></section>
-      <div class="footer">Deze app gebruikt de openbare iNaturalist v1 API. Bij geselecteerde identifiers bevraagt v3.8 iedere gebruiker afzonderlijk en voegt de resultaten daarna samen. De normale dashboardmodus haalt aggregaties plus maximaal 200 recente identificaties op. “Volledige analyse” pagineert rustig door maximaal 10.000 identificaties om een nauwkeurige tijdreeks en telling van unieke observaties te berekenen. Voor grotere datasets is een backend met cache de aanbevolen volgende stap.</div>
+      <div class="footer">Deze app gebruikt de openbare iNaturalist v1 API. Bij geselecteerde identifiers bevraagt v3.9 iedere gebruiker afzonderlijk en voegt de resultaten daarna samen. De normale dashboardmodus haalt aggregaties plus maximaal 200 recente identificaties op. “Volledige analyse” pagineert rustig door maximaal 10.000 identificaties om een nauwkeurige tijdreeks en telling van unieke observaties te berekenen. Voor grotere datasets is een backend met cache de aanbevolen volgende stap.</div>
     </main>
   </div>
 </div>
@@ -205,49 +203,7 @@ function renderRows(rows){latestRows=rows;if(!rows.length){$('idRows').innerHTML
 function mergeTaxa(groups){const m=new Map();for(const rows of groups){for(const x of (rows||[])){const id=x.taxon?.id||x.taxon_id||x.id;if(!id)continue;const prev=m.get(id);if(prev)prev.count+=(x.count||0);else m.set(id,{...x,count:x.count||0})}}return [...m.values()].sort((a,b)=>(b.count||0)-(a.count||0))}
 function mergeCategories(groups){const m=new Map();for(const rows of groups){for(const x of (rows||[]))m.set(x.category,(m.get(x.category)||0)+(x.count||0))}return {results:[...m.entries()].map(([category,count])=>({category,count}))}}
 async function loadOneUser(f,user){const ids=await api('/identifications',paramsFor(f,{__user:user,per_page:PAGE_SIZE,order_by:'created_at',order:'desc'}));await sleep(450);const cats=await api('/identifications/categories',paramsFor(f,{__user:user}));await sleep(450);const taxa=await api('/identifications/species_counts',paramsFor(f,{__user:user,per_page:200,taxon_of:'identification'}));return {user,ids,cats,taxa}}
-
-function baseParamsForUser(f,user,extra={}){
-  const p=new URLSearchParams();
-  if(f.d1)p.set('d1',f.d1);
-  if(f.d2)p.set('d2',f.d2.includes('T')?f.d2:`${f.d2}T23:59:59`);
-  if(f.taxon_id)p.set('taxon_id',f.taxon_id);
-  if(f.place_id)p.set('place_id',f.place_id);
-  if(user)p.set('user_id',user);
-  Object.entries(extra).forEach(([k,v])=>p.set(k,v));
-  return p;
-}
-async function diagnoseUserQuery(f,user){
-  const stages=[
-    {name:'user + datum + taxon/gebied', add:{}},
-    {name:'+ alleen observaties van anderen', add:{own_observation:'false'}},
-    {name:'+ alleen huidige IDs', add:{own_observation:'false',current:'true'}},
-    {name:'+ ID-categorieën', add:{own_observation:'false',current:'true',category:f.categories.join(',')}}
-  ];
-  const results=[];
-  for(const s of stages){
-    const d=await api('/identifications',baseParamsForUser(f,user,{...s.add,per_page:1}));
-    results.push({name:s.name,total:d.total_results||0});
-    await sleep(350);
-  }
-  return results;
-}
-async function runSelectedDiagnostics(f){
-  if(f.user_mode!=='selected'||!f.users.length)return;
-  const box=$('filterDiagnostic');
-  box.style.display='block';
-  box.innerHTML='<strong>Filterdiagnose v3.8</strong>Test per geselecteerde identifier…';
-  const all=[];
-  for(const u of f.users){
-    try{all.push({user:u,stages:await diagnoseUserQuery(f,u)})}
-    catch(e){all.push({user:u,error:e.message})}
-  }
-  box.innerHTML='<strong>Filterdiagnose v3.8</strong>'+all.map(r=>{
-    if(r.error)return `${escapeHtml(r.user)}: fout — ${escapeHtml(r.error)}`;
-    return `${escapeHtml(r.user)}: `+r.stages.map(s=>`${escapeHtml(s.name)} = <b>${fmt(s.total)}</b>`).join(' → ');
-  }).join('<br>');
-}
-
-async function loadDashboard(){const f=getFilters();$('filterDiagnostic').style.display='none';if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('heroName').textContent=f.name;$('loadBtn').disabled=true;$('loadBtn').textContent='Laden…';setStatus(`Bezig met laden van “${f.name}”…`);fullRows=[];try{await runSelectedDiagnostics(f);
+async function loadDashboard(){const f=getFilters();if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('heroName').textContent=f.name;$('loadBtn').disabled=true;$('loadBtn').textContent='Laden…';setStatus(`Bezig met laden van “${f.name}”…`);fullRows=[];try{
 if(f.user_mode==='selected'){
   const packs=[];
   for(let i=0;i<f.users.length;i++){setStatus(`Laden voor @${f.users[i]} (${i+1}/${f.users.length})…`);packs.push(await loadOneUser(f,f.users[i]));if(i<f.users.length-1)await sleep(450)}
@@ -276,7 +232,23 @@ if(f.user_mode==='selected'){
 rows.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));fullRows=rows;const uniqueObs=new Set(rows.map(x=>x.observation_id||x.observation?.id).filter(Boolean)).size;$('kpiObs').textContent=fmt(uniqueObs);$('obsSub').textContent=grandTotal<=FULL_LIMIT?'exact voor geladen project':`binnen eerste ${fmt(FULL_LIMIT)} IDs`;renderActivity(rows,true);if(grandTotal>FULL_LIMIT)setStatus(`Analyse afgerond voor ${fmt(rows.length)} van circa ${fmt(grandTotal)} identificaties.`,'warn');else setStatus(`Volledige analyse afgerond: ${fmt(rows.length)} identificaties en ${fmt(uniqueObs)} unieke observaties.`)
 }catch(e){console.error(e);setStatus(`Volledige analyse stopte: ${e.message}`,'error')}finally{$('fullBtn').disabled=false;$('loadBtn').disabled=false}}
 function saveProject(){const f=getFilters(),all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');all[f.name]=f;localStorage.setItem('inat-id-projects-v3',JSON.stringify(all));refreshProjects(f.name);setStatus(`Project “${f.name}” is lokaal opgeslagen.`)}
-function refreshProjects(select=''){const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');$('savedProjects').innerHTML='<option value="">— kies project —</option>'+Object.keys(all).sort().map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');if(select)$('savedProjects').value=select}
+function refreshProjects(select=''){const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');$('savedProjects').innerHTML='<option value="">— kies lokaal project —</option>'+Object.keys(all).sort().map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');if(select)$('savedProjects').value=select}
+
+let permanentProjects={};
+async function loadPermanentProjects(){
+  const sel=$('permanentProjects');
+  try{
+    const r=await fetch(`projects/projects.json?v=${Date.now()}`,{cache:'no-store'});
+    if(!r.ok)throw new Error(`${r.status} ${r.statusText}`);
+    const data=await r.json();
+    permanentProjects=data.projects||{};
+    sel.innerHTML='<option value="">— laden uit GitHub —</option>'+Object.entries(permanentProjects).sort((a,b)=>(a[1].name||a[0]).localeCompare(b[1].name||b[0],'nl')).map(([slug,f])=>`<option value="${escapeHtml(slug)}">${escapeHtml(f.name||slug)}</option>`).join('');
+    const wanted=new URLSearchParams(location.search).get('project');
+    if(wanted&&permanentProjects[wanted]){sel.value=wanted;applyFilters(permanentProjects[wanted]);setStatus(`Permanent project “${permanentProjects[wanted].name||wanted}” geladen uit GitHub.`)}
+  }catch(e){console.warn('Permanente projecten konden niet worden geladen',e);sel.innerHTML='<option value="">Permanente projecten niet beschikbaar</option>'}
+}
+function openPermanentProject(slug){if(!slug||!permanentProjects[slug])return;applyFilters(permanentProjects[slug]);const u=new URL(location.href);u.search='';u.searchParams.set('project',slug);history.replaceState(null,'',u);setStatus(`Permanent project “${permanentProjects[slug].name||slug}” geladen uit GitHub.`)}
+
 function resetForm(){history.replaceState(null,'',location.pathname);applyFilters({name:'Mijn identificatieproject',categories:['improving','leading','supporting','maverick'],current:true});$('shareBox').style.display='none'}
 function exportCsv(){const source=fullRows.length?fullRows:latestRows;if(!source.length)return setStatus('Er is nog geen data om te exporteren.','error');const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`,head=['id','created_at','identifier','taxon_id','taxon_name','category','observation_id'],rows=source.map(x=>[x.id,x.created_at,x.user?.login||x.user_id,x.taxon?.id,x.taxon?.name,x.category,x.observation_id||x.observation?.id]),csv=[head,...rows].map(r=>r.map(esc).join(',')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='identifications.csv';a.click();URL.revokeObjectURL(a.href)}
 function shareProject(){const f=getFilters(),p=new URLSearchParams();[['name',f.name],['d1',f.d1],['d2',f.d2],['taxon_id',f.taxon_id],['taxon_label',f.taxon_label],['place_id',f.place_id],['place_label',f.place_label],['users',f.users.join(',')],['user_mode',f.user_mode],['category',f.categories.join(',')],['own_observation',f.own_observation?'1':'0'],['current',f.current?'1':'0']].forEach(([k,v])=>{if(v)p.set(k,v)});const url=`${location.origin}${location.pathname}?${p.toString()}`;history.replaceState(null,'',`?${p.toString()}`);const box=$('shareBox');box.textContent=url;box.style.display='block';navigator.clipboard?.writeText(url).then(()=>setStatus('Deel-URL is naar het klembord gekopieerd.')).catch(()=>setStatus('Deel-URL staat links onder de filters.'))}
@@ -285,8 +257,8 @@ function debounce(fn,ms=350){let t;return(...args)=>{clearTimeout(t);t=setTimeou
 async function autocompleteTaxon(q){if(q.length<2){$('taxonSuggestions').style.display='none';return}try{const data=await api('/taxa/autocomplete',new URLSearchParams({q,per_page:'8'}));const box=$('taxonSuggestions'),rows=data.results||[];box.innerHTML=rows.map(t=>{const common=t.preferred_common_name?` · ${t.preferred_common_name}`:'';return `<div class="suggestion" data-id="${t.id}" data-label="${escapeHtml(t.name+common)}"><i>${escapeHtml(t.name)}</i>${common?`<span class="mini">${escapeHtml(common)}</span>`:''}</div>`}).join('');box.style.display=rows.length?'block':'none'}catch(e){console.warn(e)}}
 async function autocompletePlace(q){if(q.length<2){$('placeSuggestions').style.display='none';return}try{const data=await api('/places/autocomplete',new URLSearchParams({q,per_page:'8'}));const box=$('placeSuggestions'),rows=data.results||[];box.innerHTML=rows.map(p=>`<div class="suggestion" data-id="${p.id}" data-label="${escapeHtml(p.display_name||p.name)}">${escapeHtml(p.display_name||p.name)}</div>`).join('');box.style.display=rows.length?'block':'none'}catch(e){console.warn(e)}}
 $('taxonSearch').addEventListener('input',debounce(e=>autocompleteTaxon(e.target.value)));$('placeSearch').addEventListener('input',debounce(e=>autocompletePlace(e.target.value)));document.addEventListener('click',e=>{const s=e.target.closest('.suggestion');if(s){const box=s.parentElement,kind=box.id.startsWith('taxon')?'taxon':'place';setSelection(kind,s.dataset.id,s.dataset.label);box.style.display='none';return}if(!e.target.closest('.auto'))document.querySelectorAll('.suggestions').forEach(x=>x.style.display='none')});
-$('addUserBtn').addEventListener('click',addUsersFromInput);$('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addUsersFromInput()}});$('identifierList').addEventListener('click',e=>{const b=e.target.closest('[data-remove-user]');if(!b)return;selectedUsers.splice(Number(b.dataset.removeUser),1);renderSelectedUsers();if(!selectedUsers.length){const all=document.querySelector('input[name="userMode"][value="all"]');if(all)all.checked=true}});$('projectName').addEventListener('input',e=>$('heroName').textContent=e.target.value||'Naamloos project');$('loadBtn').addEventListener('click',loadDashboard);$('fullBtn').addEventListener('click',fullAnalysis);$('shareBtn').addEventListener('click',shareProject);$('saveBtn').addEventListener('click',saveProject);$('resetBtn').addEventListener('click',resetForm);$('csvBtn').addEventListener('click',exportCsv);$('savedProjects').addEventListener('change',e=>{if(!e.target.value)return;const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');if(all[e.target.value])applyFilters(all[e.target.value])});
-refreshProjects();renderCategories({results:[]});const urlFilters=filtersFromUrl();if(urlFilters)applyFilters(urlFilters);
+$('permanentProjects').addEventListener('change',e=>openPermanentProject(e.target.value));$('addUserBtn').addEventListener('click',addUsersFromInput);$('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addUsersFromInput()}});$('identifierList').addEventListener('click',e=>{const b=e.target.closest('[data-remove-user]');if(!b)return;selectedUsers.splice(Number(b.dataset.removeUser),1);renderSelectedUsers();if(!selectedUsers.length){const all=document.querySelector('input[name="userMode"][value="all"]');if(all)all.checked=true}});$('projectName').addEventListener('input',e=>$('heroName').textContent=e.target.value||'Naamloos project');$('loadBtn').addEventListener('click',loadDashboard);$('fullBtn').addEventListener('click',fullAnalysis);$('shareBtn').addEventListener('click',shareProject);$('saveBtn').addEventListener('click',saveProject);$('resetBtn').addEventListener('click',resetForm);$('csvBtn').addEventListener('click',exportCsv);$('savedProjects').addEventListener('change',e=>{if(!e.target.value)return;const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');if(all[e.target.value])applyFilters(all[e.target.value])});
+refreshProjects();renderCategories({results:[]});const urlFilters=filtersFromUrl();if(urlFilters&&!new URLSearchParams(location.search).get('project'))applyFilters(urlFilters);loadPermanentProjects();
 </script>
 </body>
 </html>
