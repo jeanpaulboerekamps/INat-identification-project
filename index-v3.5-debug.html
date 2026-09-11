@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>iNaturalist Identification Project Dashboard v3.5 DEBUG</title>
+<style>
+:root{--bg:#f5f6f3;--panel:#fff;--ink:#172018;--muted:#69736b;--line:#dfe5df;--accent:#74ac00;--accent-dark:#4f7900;--soft:#edf5df;--warn:#a86b00;--radius:14px;--shadow:0 8px 24px rgba(26,38,27,.06)}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)} a{color:#426900}.shell{max-width:1500px;margin:auto;padding:0 22px 30px}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:20px}.brand{display:flex;align-items:center;gap:11px}.leaf{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:900}.brand strong{font-size:18px}.live{font-size:12px;color:var(--accent-dark);font-weight:800;background:var(--soft);padding:7px 10px;border-radius:999px}
+.hero{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:8px 0 20px}.hero h1{margin:0;font-size:clamp(28px,4vw,44px);letter-spacing:-.04em}.hero p{margin:7px 0 0;color:var(--muted)}.hero-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button{border:0;border-radius:9px;padding:10px 13px;font:inherit;font-weight:800;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:#eef1ed;color:#2c392f}.ghost{background:#fff;border:1px solid var(--line);color:#334137}.danger{color:#8e392d}.small{font-size:12px;padding:8px 10px}button:disabled{opacity:.5;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.sidebar{padding:17px;align-self:start;position:sticky;top:12px}.side-title{font-weight:900;margin-bottom:4px}.side-sub{font-size:12px;color:var(--muted);margin-bottom:10px}
+label.field{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:#59645b;margin:13px 0 6px}input,select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);font:inherit}input:focus,select:focus{outline:3px solid rgba(116,172,0,.12);border-color:var(--accent)}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px}.check{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:12px}.check input{width:auto;margin:0}.sidebar .primary{width:100%;margin-top:15px}.side-actions{display:flex;gap:7px;margin-top:8px}.side-actions button{flex:1}.hint{font-size:11px;line-height:1.45;color:var(--muted);margin-top:8px}
+.auto{position:relative}.suggestions{position:absolute;z-index:30;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.12);margin-top:4px;overflow:hidden;display:none}.suggestion{padding:9px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid #edf0ec}.suggestion:last-child{border-bottom:0}.suggestion:hover{background:#f5f8f1}.selected-token{display:none;margin-top:6px;padding:7px 9px;border-radius:8px;background:var(--soft);font-size:12px;color:#3e6100}.selected-token.show{display:block}
+.main{min-width:0}.status{display:none;margin-bottom:12px;padding:12px 14px;border:1px solid #d6e6bf;background:#f2f8e9;color:#476716;border-radius:10px;font-size:13px}.status.error{border-color:#edcbc5;background:#fff2f0;color:#8c3025}.status.warn{border-color:#eeddb5;background:#fff9ea;color:#7d5600}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px}.tab{padding:10px 12px;font-size:13px;font-weight:800;color:#6d756f;border-bottom:3px solid transparent}.tab.active{color:#2f5000;border-color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px}.kpi{padding:16px}.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:900}.kpi .value{font-size:29px;font-weight:900;letter-spacing:-.04em;margin-top:3px}.kpi .sub{font-size:10px;color:var(--muted);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.card{padding:17px;min-width:0}.card h2{margin:0;font-size:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.section-head .meta{font-size:11px;color:var(--muted)}
+.bar-row{display:grid;grid-template-columns:minmax(100px,1.25fr) 2fr auto;gap:9px;align-items:center;margin:10px 0}.bar-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.track{height:9px;background:#edf0ec;border-radius:99px;overflow:hidden}.fill{height:100%;background:var(--accent);border-radius:99px}.count{font-variant-numeric:tabular-nums;font-weight:900;font-size:11px;color:#4c5850}.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.cat{padding:12px;border:1px solid var(--line);background:#fafbf9;border-radius:10px}.cat strong{display:block;font-size:20px}.cat span{font-size:11px;color:var(--muted)}
+.chart{height:190px;display:flex;align-items:end;gap:3px;border-bottom:1px solid var(--line);padding-top:24px}.day{flex:1;min-width:3px;background:var(--accent);border-radius:3px 3px 0 0;position:relative;opacity:.87}.day:hover:after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 5px);background:#172018;color:#fff;border-radius:6px;padding:5px 7px;white-space:nowrap;font-size:10px;z-index:5}.chart-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:6px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:820px}th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px;vertical-align:top}th{position:sticky;top:0;background:#f8faf7;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#616b63}tr:last-child td{border-bottom:0}.mini{font-size:10px;color:var(--muted);margin-top:2px}.taxon{font-style:italic}.pill{display:inline-block;padding:3px 6px;border-radius:99px;background:#eef1ec;font-size:10px;font-weight:900}.empty{padding:22px 2px;color:var(--muted);font-size:12px}
+.progress{height:7px;background:#e8ece6;border-radius:99px;overflow:hidden;margin-top:8px}.progress>div{height:100%;width:0;background:var(--accent);transition:width .2s}.share-box{margin-top:10px;padding:9px;background:#f7f9f5;border:1px solid var(--line);border-radius:9px;font-size:11px;word-break:break-all;display:none}.footer{font-size:11px;color:var(--muted);line-height:1.5;margin:17px 2px}
+
+.identifier-entry{display:flex;gap:8px;align-items:stretch}.identifier-entry input{flex:1;min-width:0}.identifier-entry button{white-space:nowrap}.identifier-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.identifier-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 10px;background:var(--soft);border:1px solid #d8e7bf;border-radius:999px;font-size:13px;font-weight:800}.identifier-chip button{padding:0;background:transparent;color:#60704f;font-size:17px;line-height:1}.identifier-mode{display:flex;gap:8px;margin-top:8px}.identifier-mode label{flex:1}.identifier-mode .check{justify-content:center}.id-help{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+@media(max-width:1400px),(pointer:coarse){.shell{max-width:none;padding:0 24px 36px}.topbar{height:72px}.brand strong{font-size:21px}.leaf{width:42px;height:42px}.live{font-size:14px}.hero{margin:14px 0 24px}.hero h1{font-size:clamp(34px,5vw,52px)}.hero p{font-size:17px}.layout{grid-template-columns:1fr;gap:20px}.sidebar{position:static;padding:22px}.side-title{font-size:20px}.side-sub{font-size:14px}.sidebar input,.sidebar select{font-size:16px;min-height:48px}.sidebar button{min-height:46px;font-size:15px}label.field{font-size:13px;margin-top:17px}.check{font-size:14px;min-height:44px}.hint,.id-help{font-size:13px}.kpis{grid-template-columns:repeat(3,1fr);gap:14px}.kpi{padding:20px}.kpi .label{font-size:13px}.kpi .value{font-size:38px}.kpi .sub{font-size:12px}.grid2{gap:14px}.card{padding:20px}.card h2{font-size:19px}.bar-label{font-size:14px}.count{font-size:13px}.cat strong{font-size:25px}.cat span{font-size:13px}.tabs .tab{font-size:15px;padding:13px 15px}th,td{font-size:14px;padding:13px 14px}th{font-size:12px}.footer{font-size:13px}.chart{height:240px}}
+@media(max-width:900px){.shell{padding:0 16px 28px}.hero{flex-direction:column}.hero-actions{justify-content:flex-start;width:100%}.hero-actions button{flex:1;min-height:48px}.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.categories{grid-template-columns:repeat(2,1fr)}.row2{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.kpis{grid-template-columns:1fr}.row2{grid-template-columns:1fr}.identifier-entry{flex-direction:column}.identifier-mode{flex-direction:column}}
+
+/* v3.1 — iPad-first sizing and full-width layout */
+html,body{width:100%;min-height:100%;overflow-x:hidden}
+body{font-size:17px}
+.shell{width:100%;max-width:none;margin:0;padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+@media (pointer:coarse), (min-width:768px) and (max-width:1400px){
+  body{font-size:18px}
+  .shell{width:100vw;max-width:none;padding-top:0;padding-bottom:36px}
+  .topbar{height:80px;margin-bottom:24px}
+  .brand strong{font-size:24px}.leaf{width:48px;height:48px;font-size:18px}.live{font-size:15px;padding:9px 12px}
+  .hero{margin:16px 0 26px}.hero h1{font-size:clamp(40px,5.3vw,60px)}.hero p{font-size:19px}
+  .hero-actions button{font-size:17px;padding:14px 18px;min-height:52px}
+  .layout{grid-template-columns:1fr;gap:22px;width:100%}
+  .sidebar{width:100%;padding:24px;position:static}
+  .side-title{font-size:23px}.side-sub{font-size:15px}
+  label.field{font-size:14px;margin-top:18px}
+  input,select{font-size:18px!important;min-height:54px;padding:13px 14px}
+  button{font-size:17px;min-height:50px;padding:12px 15px}
+  .check{font-size:16px;min-height:50px;padding:11px}.hint,.id-help{font-size:14px}
+  .tabs{gap:8px}.tabs .tab{font-size:17px;padding:14px 16px}
+  .kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.kpi{padding:22px}.kpi .label{font-size:14px}.kpi .value{font-size:42px}.kpi .sub{font-size:13px}
+  .grid2{gap:16px}.card{padding:22px}.card h2{font-size:21px}.section-head .meta{font-size:13px}
+  .bar-row{grid-template-columns:minmax(150px,1.25fr) 2fr auto;gap:12px;margin:13px 0}.bar-label{font-size:16px}.track{height:12px}.count{font-size:15px}
+  .categories{gap:10px}.cat{padding:16px}.cat strong{font-size:30px}.cat span{font-size:14px}
+  .chart{height:280px}.chart-meta{font-size:12px}
+  th,td{font-size:16px;padding:14px 15px}th{font-size:13px}.mini{font-size:12px}.pill{font-size:12px;padding:5px 8px}
+  .status{font-size:15px;padding:14px 16px}.footer{font-size:14px}
+  .identifier-chip{font-size:15px;padding:10px 12px}.identifier-chip button{font-size:20px}
+}
+@media (pointer:coarse) and (orientation:portrait), (max-width:900px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .categories{grid-template-columns:repeat(2,1fr)}
+}
+@media (pointer:coarse) and (orientation:landscape) and (min-width:1000px){
+  .shell{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right))}
+  .sidebar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:16px;align-items:end}
+  .sidebar>.side-title,.sidebar>.side-sub,.sidebar>#loadBtn,.sidebar>.side-actions,.sidebar>.hint,.sidebar>.share-box,.sidebar>#fullProgress{grid-column:1/-1}
+  .sidebar .primary{margin-top:16px}
+  .identifier-entry,.identifier-list,.identifier-mode,.id-help{grid-column:span 2}
+}
+
+/* v3.2 — extra-large tablet mode */
+html.ipad body{font-size:21px}
+html.ipad .shell{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
+html.ipad .topbar{height:92px}
+html.ipad .brand strong{font-size:28px}
+html.ipad .leaf{width:56px;height:56px;font-size:21px}
+html.ipad .live{font-size:17px;padding:11px 14px}
+html.ipad .hero h1{font-size:clamp(48px,6vw,68px)}
+html.ipad .hero p{font-size:22px}
+html.ipad .hero-actions button,html.ipad button{font-size:20px;min-height:58px;padding:15px 19px}
+html.ipad .sidebar{padding:28px}
+html.ipad .side-title{font-size:28px}
+html.ipad .side-sub{font-size:18px}
+html.ipad label.field{font-size:16px;margin-top:21px}
+html.ipad input,html.ipad select{font-size:21px!important;min-height:62px;padding:15px 16px}
+html.ipad .check{font-size:18px;min-height:58px;padding:13px}
+html.ipad .hint,html.ipad .id-help{font-size:16px}
+html.ipad .tabs .tab{font-size:20px;padding:17px 19px}
+html.ipad .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+html.ipad .kpi{padding:27px}
+html.ipad .kpi .label{font-size:16px}
+html.ipad .kpi .value{font-size:52px}
+html.ipad .kpi .sub{font-size:15px}
+html.ipad .grid2{grid-template-columns:1fr;gap:18px}
+html.ipad .card{padding:27px}
+html.ipad .card h2{font-size:25px}
+html.ipad .section-head .meta{font-size:15px}
+html.ipad .bar-row{grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:14px;margin:16px 0}
+html.ipad .bar-label{font-size:19px}
+html.ipad .track{height:14px}
+html.ipad .count{font-size:17px}
+html.ipad .categories{grid-template-columns:repeat(2,1fr);gap:13px}
+html.ipad .cat{padding:20px}
+html.ipad .cat strong{font-size:37px}
+html.ipad .cat span{font-size:17px}
+html.ipad .chart{height:330px}
+html.ipad th,html.ipad td{font-size:18px;padding:17px}
+html.ipad th{font-size:15px}
+html.ipad .mini{font-size:14px}
+html.ipad .pill{font-size:14px;padding:6px 9px}
+html.ipad .status{font-size:18px;padding:17px}
+html.ipad .identifier-chip{font-size:18px;padding:12px 14px}
+html.ipad .footer{font-size:16px}
+html.ipad .sidebar{display:block!important}
+
+
+.debug-panel{margin:0 0 16px;padding:18px;background:#fff8df;border:2px solid #d5a100;border-radius:14px;font-size:15px;line-height:1.45}
+.debug-panel h2{margin:0 0 10px;font-size:20px}
+.debug-panel pre{white-space:pre-wrap;word-break:break-all;background:#fff;border:1px solid #ead9a1;border-radius:9px;padding:12px;font-size:13px;max-height:320px;overflow:auto}
+.debug-panel button{margin-top:8px}
+</style>
+</head>
+<body>
+<script>
+(function(){var ua=navigator.userAgent||"";var ipad=/iPad/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);if(ipad)document.documentElement.classList.add("ipad");})();
+</script>
+<div class="shell">
+  <div class="topbar"><div class="brand"><div class="leaf">ID</div><strong>iNaturalist Identification Project</strong></div><div class="live">● openbare API</div></div>
+  <div class="hero">
+    <div><h1 id="heroName">Mijn identificatieproject</h1><p>Dashboard voor identificatie-activiteit, identifiers en taxa.</p></div>
+    <div class="hero-actions"><button id="shareBtn" class="ghost">Deel project</button><button id="fullBtn" class="secondary">Volledige analyse</button></div>
+  </div>
+  <div class="layout">
+    <aside class="panel sidebar">
+      <div class="side-title">Projectfilters</div><div class="side-sub">Definieer je identification project.</div>
+      <label class="field" for="projectName">Projectnaam</label><input id="projectName" value="Mijn identificatieproject" />
+      <div class="row2"><div><label class="field" for="d1">ID vanaf</label><input id="d1" type="date"></div><div><label class="field" for="d2">ID t/m</label><input id="d2" type="date"></div></div>
+      <label class="field" for="taxonSearch">Taxon</label>
+      <div class="auto"><input id="taxonSearch" autocomplete="off" placeholder="Zoek op naam, bv. nachtvlinders"><div id="taxonSuggestions" class="suggestions"></div></div>
+      <div id="taxonSelected" class="selected-token"></div><input id="taxonId" type="hidden">
+      <label class="field" for="placeSearch">Gebied</label>
+      <div class="auto"><input id="placeSearch" autocomplete="off" placeholder="Zoek plaats of natuurgebied"><div id="placeSuggestions" class="suggestions"></div></div>
+      <div id="placeSelected" class="selected-token"></div><input id="placeId" type="hidden">
+      <label class="field" for="userInput">Identifiers</label>
+      <div class="identifier-entry"><input id="userInput" autocomplete="off" placeholder="iNaturalist-gebruikersnaam"><button id="addUserBtn" type="button" class="secondary">+ Toevoegen</button></div>
+      <div class="identifier-mode">
+        <label class="check"><input type="radio" name="userMode" value="all" checked> Alle identifiers</label>
+        <label class="check"><input type="radio" name="userMode" value="selected"> Geselecteerde</label>
+      </div>
+      <div id="identifierList" class="identifier-list"></div>
+      <div class="id-help">Voeg één of meer iNaturalist-usernames toe. Je kunt ook een lijst met komma's plakken en op Toevoegen tikken.</div>
+      <label class="field">ID-categorieën</label><div class="checks">
+        <label class="check"><input type="checkbox" name="cat" value="improving" checked> improving</label><label class="check"><input type="checkbox" name="cat" value="leading" checked> leading</label><label class="check"><input type="checkbox" name="cat" value="supporting" checked> supporting</label><label class="check"><input type="checkbox" name="cat" value="maverick" checked> maverick</label>
+      </div>
+      <label class="check" style="margin-top:10px"><input id="ownObs" type="checkbox"> IDs op eigen observaties meenemen</label><label class="check"><input id="currentOnly" type="checkbox" checked> Alleen huidige IDs</label>
+      <button id="loadBtn" class="primary">Dashboard laden</button>
+      <div class="side-actions"><button id="saveBtn" class="secondary small">Opslaan</button><button id="resetBtn" class="ghost small">Wissen</button></div>
+      <label class="field" for="savedProjects">Opgeslagen projecten</label><select id="savedProjects"><option value="">— kies project —</option></select>
+      <div id="fullProgress" class="progress" style="display:none"><div></div></div>
+      <div id="shareBox" class="share-box"></div>
+      <div class="hint">Lokale projecten blijven alleen in deze browser. Een deel-URL bevat de filterinstellingen, geen wachtwoord of token.</div>
+    </aside>
+
+    <main class="main">
+      <div class="tabs"><div class="tab active">Overzicht</div><div class="tab">Identifiers</div><div class="tab">Taxa</div><div class="tab">Identificaties</div></div>
+      <div id="debugPanel" class="debug-panel">
+<h2>🔎 API-debug v3.5</h2>
+<div>Hier zie je exact wat de app naar iNaturalist stuurt.</div>
+<pre id="debugOutput">Nog geen API-aanvraag gedaan.</pre>
+<button id="copyDebugBtn" class="ghost small" type="button">Kopieer debug-informatie</button>
+</div>
+<div id="status" class="status"></div>
+      <section class="kpis">
+        <div class="panel kpi"><div class="label">Identificaties</div><div id="kpiIds" class="value">—</div><div class="sub">totaal volgens API</div></div>
+        <div class="panel kpi"><div class="label">Identifiers</div><div id="kpiIdentifiers" class="value">—</div><div class="sub">unieke identificeerders</div></div>
+        <div class="panel kpi"><div class="label">Taxa</div><div id="kpiTaxa" class="value">—</div><div class="sub">geïdentificeerde taxa</div></div>
+        <div class="panel kpi"><div class="label">Observaties</div><div id="kpiObs" class="value">—</div><div id="obsSub" class="sub">recente steekproef</div></div>
+        <div class="panel kpi"><div class="label">Improving</div><div id="kpiImproving" class="value">—</div><div class="sub">verbeterende IDs</div></div>
+      </section>
+      <section class="grid2">
+        <div class="panel card"><div class="section-head"><h2>Top-identificeerders</h2><span class="meta">top 10</span></div><div id="identifiers"><div class="empty">Laad een project om resultaten te zien.</div></div></div>
+        <div class="panel card"><div class="section-head"><h2>Top-taxa</h2><span class="meta">taxon van identificatie</span></div><div id="taxa"><div class="empty">Laad een project om resultaten te zien.</div></div></div>
+      </section>
+      <section class="grid2">
+        <div class="panel card"><div class="section-head"><h2>ID-categorieën</h2></div><div id="categories" class="categories"></div></div>
+        <div class="panel card"><div class="section-head"><h2>Activiteit</h2><span id="activityMeta" class="meta">recente steekproef</span></div><div id="activity" class="chart"></div><div id="chartMeta" class="chart-meta"></div></div>
+      </section>
+      <section class="panel card"><div class="section-head"><h2>Recente identificaties</h2><button id="csvBtn" class="ghost small">CSV exporteren</button></div><div class="table-wrap"><table><thead><tr><th>Datum</th><th>Identifier</th><th>Identificatie</th><th>Categorie</th><th>Observatie</th></tr></thead><tbody id="idRows"><tr><td colspan="5" class="empty">Nog geen data geladen.</td></tr></tbody></table></div></section>
+      <div class="footer">Deze app gebruikt de openbare iNaturalist v1 API. De normale dashboardmodus haalt aggregaties plus maximaal 200 recente identificaties op. “Volledige analyse” pagineert rustig door maximaal 10.000 identificaties om een nauwkeurige tijdreeks en telling van unieke observaties te berekenen. Voor grotere datasets is een backend met cache de aanbevolen volgende stap.</div>
+    </main>
+  </div>
+</div>
+<script>
+const API='https://api.inaturalist.org/v1'; const PAGE_SIZE=200, FULL_LIMIT=10000; let latestRows=[], fullRows=[], selectedUsers=[];
+const $=id=>document.getElementById(id), fmt=n=>(n??0).toLocaleString('nl-NL'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function getFilters(){const userMode=document.querySelector('input[name="userMode"]:checked')?.value||'all';return{name:$('projectName').value.trim()||'Naamloos project',d1:$('d1').value,d2:$('d2').value,taxon_id:$('taxonId').value.trim(),taxon_label:$('taxonSelected').dataset.label||'',place_id:$('placeId').value.trim(),place_label:$('placeSelected').dataset.label||'',users:[...selectedUsers],user_mode:userMode,categories:[...document.querySelectorAll('input[name="cat"]:checked')].map(x=>x.value),own_observation:$('ownObs').checked,current:$('currentOnly').checked}}
+function applyFilters(f={}){$('projectName').value=f.name||'Mijn identificatieproject';$('heroName').textContent=$('projectName').value;$('d1').value=f.d1||'';$('d2').value=f.d2||'';$('taxonId').value=f.taxon_id||'';$('placeId').value=f.place_id||'';selectedUsers=[...new Set((f.users||(f.user_id?[f.user_id]:[])).filter(Boolean).map(x=>String(x).trim()).filter(Boolean))];renderSelectedUsers();const mode=f.user_mode||(selectedUsers.length?'selected':'all');const radio=document.querySelector(`input[name="userMode"][value="${mode}"]`);if(radio)radio.checked=true;document.querySelectorAll('input[name="cat"]').forEach(c=>c.checked=(f.categories||['improving','leading','supporting','maverick']).includes(c.value));$('ownObs').checked=!!f.own_observation;$('currentOnly').checked=f.current!==false;setSelection('taxon',f.taxon_id,f.taxon_label);setSelection('place',f.place_id,f.place_label)}
+function setSelection(kind,id,label){const hidden=$(kind+'Id'), token=$(kind+'Selected'), search=$(kind+'Search');hidden.value=id||'';token.dataset.label=label||'';token.classList.toggle('show',!!id);token.innerHTML=id?`${escapeHtml(label||kind+' '+id)} <button type="button" class="ghost small" style="float:right;padding:1px 5px" onclick="clearSelection('${kind}')">×</button>`:'';if(id) search.value=''}
+window.clearSelection=function(kind){setSelection(kind,'','')}
+function paramsFor(f,extra={}){const p=new URLSearchParams(); if(f.d1)p.set('d1',f.d1);if(f.d2)p.set('d2',f.d2);if(f.taxon_id)p.set('taxon_id',f.taxon_id);if(f.place_id)p.set('place_id',f.place_id);if(extra.__resolved_user_ids?.length)p.set('user_id',extra.__resolved_user_ids.join(','));if(f.categories.length)p.set('category',f.categories.join(','));p.set('own_observation',f.own_observation?'true':'false');p.set('current',f.current?'true':'false');Object.entries(extra).forEach(([k,v])=>{if(!k.startsWith('__'))p.set(k,v)});return p}
+let debugLog=[];
+function debugLine(s){debugLog.push(s);const el=$('debugOutput');if(el)el.textContent=debugLog.join('\n\n')}
+async function api(path,params){
+  const url=`${API}${path}?${params.toString()}`;
+  debugLine(`REQUEST\n${url}`);
+  let r;
+  try{r=await fetch(url,{headers:{Accept:'application/json'}})}
+  catch(e){debugLine(`FETCH ERROR\n${e.message}`);throw e}
+  const raw=await r.text();
+  let data;
+  try{data=JSON.parse(raw)}catch(e){data=null}
+  debugLine(`RESPONSE ${r.status} ${r.statusText}\n${data?`total_results: ${data.total_results ?? 'niet aanwezig'}\nresults.length: ${Array.isArray(data.results)?data.results.length:'niet aanwezig'}\nerror: ${data.error||data.errors||'geen'}`:raw.slice(0,800)}`);
+  if(!r.ok)throw new Error(`${r.status} ${r.statusText}: ${raw.slice(0,300)}`);
+  return data;
+}
+function setStatus(text,type=''){const s=$('status');s.style.display='block';s.textContent=text;s.classList.remove('error','warn');if(type)s.classList.add(type)}
+function renderSelectedUsers(){const box=$('identifierList');if(!selectedUsers.length){box.innerHTML='<span class="mini">Nog geen identifiers geselecteerd.</span>';return}box.innerHTML=selectedUsers.map((u,i)=>`<span class="identifier-chip">@${escapeHtml(u)} <button type="button" data-remove-user="${i}" aria-label="Verwijder ${escapeHtml(u)}">×</button></span>`).join('')}
+function addUsersFromInput(){const raw=$('userInput').value.trim();if(!raw)return;const incoming=raw.split(/[\s,;]+/).map(x=>x.trim().replace(/^@/,'')).filter(Boolean);selectedUsers=[...new Set([...selectedUsers,...incoming])];$('userInput').value='';renderSelectedUsers();const selectedRadio=document.querySelector('input[name="userMode"][value="selected"]');if(selectedRadio)selectedRadio.checked=true}
+function renderBars(el,rows,labelFn,countFn){if(!rows?.length){el.innerHTML='<div class="empty">Geen resultaten.</div>';return}const max=Math.max(...rows.map(countFn),1);el.innerHTML=rows.slice(0,10).map(r=>{const count=countFn(r),label=labelFn(r);return `<div class="bar-row"><div class="bar-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="track"><div class="fill" style="width:${Math.max(2,count/max*100)}%"></div></div><div class="count">${fmt(count)}</div></div>`}).join('')}
+function taxonLabel(x){const t=x.taxon||{};return t.preferred_common_name?`${t.preferred_common_name} · ${t.name||''}`:(t.name||`Taxon ${t.id||''}`)}
+function identifierLabel(x){const u=x.user||{};return u.name?`${u.login||x.user_id} · ${u.name}`:(u.login||String(x.user_id||'onbekend'))}
+function renderCategories(data){const map=Object.fromEntries((data.results||[]).map(x=>[x.category,x.count]));const cats=['improving','leading','supporting','maverick'];$('categories').innerHTML=cats.map(c=>`<div class="cat"><strong>${fmt(map[c]||0)}</strong><span>${c}</span></div>`).join('');$('kpiImproving').textContent=fmt(map.improving||0)}
+function bucketKey(date,rangeDays){const d=new Date(date);if(rangeDays>150)return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;if(rangeDays>50){const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x.toISOString().slice(0,10)}return d.toISOString().slice(0,10)}
+function renderActivity(rows,full=false){const dates=rows.map(x=>x.created_at).filter(Boolean).map(x=>new Date(x));if(!dates.length){$('activity').innerHTML='<div class="empty">Geen activiteit.</div>';$('chartMeta').innerHTML='';return}const min=new Date(Math.min(...dates)),maxD=new Date(Math.max(...dates)),days=Math.max(1,(maxD-min)/86400000);const buckets=new Map();rows.forEach(x=>{if(!x.created_at)return;const k=bucketKey(x.created_at,days);buckets.set(k,(buckets.get(k)||0)+1)});let entries=[...buckets.entries()].sort((a,b)=>a[0].localeCompare(b[0]));if(!full)entries=entries.slice(-40);const max=Math.max(...entries.map(x=>x[1]),1);$('activity').innerHTML=entries.map(([d,n])=>`<div class="day" style="height:${Math.max(3,n/max*100)}%" data-tip="${d}: ${n}"></div>`).join('');$('activityMeta').textContent=full?'volledige analyse':'recente steekproef';$('chartMeta').innerHTML=entries.length?`<span>${entries[0][0]}</span><span>${entries.at(-1)[0]}</span>`:''}
+async function resolveUserIds(logins){
+  const ids=[];
+  for(const login of logins){
+    const q=new URLSearchParams({q:login,per_page:'20'});
+    const data=await api('/users/autocomplete',q);
+    const hit=(data.results||[]).find(u=>String(u.login||'').toLowerCase()===String(login).toLowerCase());
+    if(!hit) throw new Error(`iNaturalist-gebruiker niet gevonden: ${login}`);
+    ids.push(hit.id);
+    await sleep(250);
+  }
+  return ids;
+}
+function renderRows(rows){latestRows=rows;if(!rows.length){$('idRows').innerHTML='<tr><td colspan="5" class="empty">Geen identificaties gevonden.</td></tr>';return}$('idRows').innerHTML=rows.slice(0,100).map(x=>{const u=x.user||{},t=x.taxon||{},o=x.observation||{},date=x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'—',obsId=x.observation_id||o.id;return `<tr><td>${escapeHtml(date)}</td><td><strong>${escapeHtml(u.login||x.user_id||'—')}</strong>${u.name?`<div class="mini">${escapeHtml(u.name)}</div>`:''}</td><td><span class="taxon">${escapeHtml(t.name||'—')}</span>${t.preferred_common_name?`<div class="mini">${escapeHtml(t.preferred_common_name)}</div>`:''}</td><td><span class="pill">${escapeHtml(x.category||'—')}</span></td><td>${obsId?`<a href="https://www.inaturalist.org/observations/${obsId}" target="_blank" rel="noopener">#${obsId}</a>`:'—'}</td></tr>`}).join('')}
+async function loadDashboard(){debugLog=[];const f=getFilters();debugLine(`FILTERS\n${JSON.stringify(f,null,2)}`);if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('heroName').textContent=f.name;$('loadBtn').disabled=true;$('loadBtn').textContent='Laden…';setStatus(`Bezig met laden van “${f.name}”…`);fullRows=[];try{const resolvedUserIds=f.user_mode==='selected'?await resolveUserIds(f.users):[];debugLine(`RESOLVED USER IDS\n${resolvedUserIds.join(', ')||'(alle identifiers)'}`);const ids=await api('/identifications',paramsFor(f,{__resolved_user_ids:resolvedUserIds,per_page:PAGE_SIZE,order_by:'created_at',order:'desc'}));await sleep(1050);const categories=await api('/identifications/categories',paramsFor(f,{__resolved_user_ids:resolvedUserIds}));await sleep(1050);const identifiers=await api('/identifications/identifiers',paramsFor(f,{__resolved_user_ids:resolvedUserIds,per_page:100}));await sleep(1050);const taxa=await api('/identifications/species_counts',paramsFor(f,{__resolved_user_ids:resolvedUserIds,per_page:100,taxon_of:'identification'}));$('kpiIds').textContent=fmt(ids.total_results||0);$('kpiIdentifiers').textContent=fmt(identifiers.total_results||identifiers.results?.length||0);$('kpiTaxa').textContent=fmt(taxa.total_results||taxa.results?.length||0);$('kpiObs').textContent=fmt(new Set((ids.results||[]).map(x=>x.observation_id||x.observation?.id).filter(Boolean)).size);$('obsSub').textContent='in 200 recente IDs';renderCategories(categories);renderBars($('identifiers'),identifiers.results||[],identifierLabel,x=>x.count||0);renderBars($('taxa'),taxa.results||[],taxonLabel,x=>x.count||0);renderActivity(ids.results||[],false);renderRows(ids.results||[]);setStatus(`“${f.name}” geladen · ${fmt(ids.total_results||0)} identificaties. Gebruik Volledige analyse voor een nauwkeurige tijdreeks en unieke observaties.`)}catch(e){console.error(e);setStatus(`Kon iNaturalist-data niet laden: ${e.message}. Controleer de filters en gebruik bij voorkeur een lokale webserver.`,'error')}finally{$('loadBtn').disabled=false;$('loadBtn').textContent='Dashboard laden'}}
+async function fullAnalysis(){const f=getFilters();if(f.user_mode==='selected'&&!f.users.length){setStatus('Kies minstens één identifier of zet de keuze op “Alle identifiers”.','error');return}$('fullBtn').disabled=true;$('loadBtn').disabled=true;const bar=$('fullProgress');bar.style.display='block';bar.firstElementChild.style.width='0%';try{const resolvedUserIds=f.user_mode==='selected'?await resolveUserIds(f.users):[];const first=await api('/identifications',paramsFor(f,{__resolved_user_ids:resolvedUserIds,per_page:PAGE_SIZE,page:1,order_by:'created_at',order:'desc'}));const total=first.total_results||0,target=Math.min(total,FULL_LIMIT);let rows=[...(first.results||[])],pages=Math.ceil(target/PAGE_SIZE);setStatus(`Volledige analyse: ${fmt(rows.length)} van ${fmt(target)} identificaties geladen…`);bar.firstElementChild.style.width=`${Math.min(100,rows.length/Math.max(target,1)*100)}%`;for(let page=2;page<=pages;page++){await sleep(1050);const d=await api('/identifications',paramsFor(f,{__resolved_user_ids:resolvedUserIds,per_page:PAGE_SIZE,page,order_by:'created_at',order:'desc'}));rows.push(...(d.results||[]));rows=rows.slice(0,target);bar.firstElementChild.style.width=`${Math.min(100,rows.length/Math.max(target,1)*100)}%`;setStatus(`Volledige analyse: ${fmt(rows.length)} van ${fmt(target)} identificaties geladen…`);if(!(d.results||[]).length)break}fullRows=rows;const uniqueObs=new Set(rows.map(x=>x.observation_id||x.observation?.id).filter(Boolean)).size;$('kpiObs').textContent=fmt(uniqueObs);$('obsSub').textContent=total<=FULL_LIMIT?'exact voor dit project':`exact binnen eerste ${fmt(FULL_LIMIT)} IDs`;renderActivity(rows,true);if(total>FULL_LIMIT)setStatus(`Analyse afgerond voor ${fmt(FULL_LIMIT)} van ${fmt(total)} identificaties. Voor de volledige dataset is een backend met cache verstandiger.`,'warn');else setStatus(`Volledige analyse afgerond: ${fmt(total)} identificaties en ${fmt(uniqueObs)} unieke observaties.`)}catch(e){console.error(e);setStatus(`Volledige analyse stopte: ${e.message}`,'error')}finally{$('fullBtn').disabled=false;$('loadBtn').disabled=false}}
+function saveProject(){const f=getFilters(),all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');all[f.name]=f;localStorage.setItem('inat-id-projects-v3',JSON.stringify(all));refreshProjects(f.name);setStatus(`Project “${f.name}” is lokaal opgeslagen.`)}
+function refreshProjects(select=''){const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');$('savedProjects').innerHTML='<option value="">— kies project —</option>'+Object.keys(all).sort().map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');if(select)$('savedProjects').value=select}
+function resetForm(){history.replaceState(null,'',location.pathname);applyFilters({name:'Mijn identificatieproject',categories:['improving','leading','supporting','maverick'],current:true});$('shareBox').style.display='none'}
+function exportCsv(){const source=fullRows.length?fullRows:latestRows;if(!source.length)return setStatus('Er is nog geen data om te exporteren.','error');const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`,head=['id','created_at','identifier','taxon_id','taxon_name','category','observation_id'],rows=source.map(x=>[x.id,x.created_at,x.user?.login||x.user_id,x.taxon?.id,x.taxon?.name,x.category,x.observation_id||x.observation?.id]),csv=[head,...rows].map(r=>r.map(esc).join(',')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='identifications.csv';a.click();URL.revokeObjectURL(a.href)}
+function shareProject(){const f=getFilters(),p=new URLSearchParams();[['name',f.name],['d1',f.d1],['d2',f.d2],['taxon_id',f.taxon_id],['taxon_label',f.taxon_label],['place_id',f.place_id],['place_label',f.place_label],['users',f.users.join(',')],['user_mode',f.user_mode],['category',f.categories.join(',')],['own_observation',f.own_observation?'1':'0'],['current',f.current?'1':'0']].forEach(([k,v])=>{if(v)p.set(k,v)});const url=`${location.origin}${location.pathname}?${p.toString()}`;history.replaceState(null,'',`?${p.toString()}`);const box=$('shareBox');box.textContent=url;box.style.display='block';navigator.clipboard?.writeText(url).then(()=>setStatus('Deel-URL is naar het klembord gekopieerd.')).catch(()=>setStatus('Deel-URL staat links onder de filters.'))}
+function filtersFromUrl(){const p=new URLSearchParams(location.search);if(![...p.keys()].length)return null;const users=(p.get('users')||p.get('user_id')||'').split(',').map(x=>x.trim()).filter(Boolean);return{name:p.get('name')||'Gedeeld identification project',d1:p.get('d1')||'',d2:p.get('d2')||'',taxon_id:p.get('taxon_id')||'',taxon_label:p.get('taxon_label')||'',place_id:p.get('place_id')||'',place_label:p.get('place_label')||'',users,user_mode:p.get('user_mode')||(users.length?'selected':'all'),categories:(p.get('category')||'improving,leading,supporting,maverick').split(',').filter(Boolean),own_observation:p.get('own_observation')==='1',current:p.get('current')!=='0'}}
+function debounce(fn,ms=350){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}}
+async function autocompleteTaxon(q){if(q.length<2){$('taxonSuggestions').style.display='none';return}try{const data=await api('/taxa/autocomplete',new URLSearchParams({q,per_page:'8'}));const box=$('taxonSuggestions'),rows=data.results||[];box.innerHTML=rows.map(t=>{const common=t.preferred_common_name?` · ${t.preferred_common_name}`:'';return `<div class="suggestion" data-id="${t.id}" data-label="${escapeHtml(t.name+common)}"><i>${escapeHtml(t.name)}</i>${common?`<span class="mini">${escapeHtml(common)}</span>`:''}</div>`}).join('');box.style.display=rows.length?'block':'none'}catch(e){console.warn(e)}}
+async function autocompletePlace(q){if(q.length<2){$('placeSuggestions').style.display='none';return}try{const data=await api('/places/autocomplete',new URLSearchParams({q,per_page:'8'}));const box=$('placeSuggestions'),rows=data.results||[];box.innerHTML=rows.map(p=>`<div class="suggestion" data-id="${p.id}" data-label="${escapeHtml(p.display_name||p.name)}">${escapeHtml(p.display_name||p.name)}</div>`).join('');box.style.display=rows.length?'block':'none'}catch(e){console.warn(e)}}
+$('taxonSearch').addEventListener('input',debounce(e=>autocompleteTaxon(e.target.value)));$('placeSearch').addEventListener('input',debounce(e=>autocompletePlace(e.target.value)));document.addEventListener('click',e=>{const s=e.target.closest('.suggestion');if(s){const box=s.parentElement,kind=box.id.startsWith('taxon')?'taxon':'place';setSelection(kind,s.dataset.id,s.dataset.label);box.style.display='none';return}if(!e.target.closest('.auto'))document.querySelectorAll('.suggestions').forEach(x=>x.style.display='none')});
+$('copyDebugBtn').addEventListener('click',()=>{navigator.clipboard?.writeText($('debugOutput').textContent).then(()=>setStatus('Debug-informatie gekopieerd.')).catch(()=>setStatus('Kopiëren lukte niet; maak een screenshot van het gele debugvak.','warn'))});
+$('addUserBtn').addEventListener('click',addUsersFromInput);$('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addUsersFromInput()}});$('identifierList').addEventListener('click',e=>{const b=e.target.closest('[data-remove-user]');if(!b)return;selectedUsers.splice(Number(b.dataset.removeUser),1);renderSelectedUsers();if(!selectedUsers.length){const all=document.querySelector('input[name="userMode"][value="all"]');if(all)all.checked=true}});$('projectName').addEventListener('input',e=>$('heroName').textContent=e.target.value||'Naamloos project');$('loadBtn').addEventListener('click',loadDashboard);$('fullBtn').addEventListener('click',fullAnalysis);$('shareBtn').addEventListener('click',shareProject);$('saveBtn').addEventListener('click',saveProject);$('resetBtn').addEventListener('click',resetForm);$('csvBtn').addEventListener('click',exportCsv);$('savedProjects').addEventListener('change',e=>{if(!e.target.value)return;const all=JSON.parse(localStorage.getItem('inat-id-projects-v3')||'{}');if(all[e.target.value])applyFilters(all[e.target.value])});
+refreshProjects();renderCategories({results:[]});const urlFilters=filtersFromUrl();if(urlFilters)applyFilters(urlFilters);
+</script>
+</body>
+</html>
